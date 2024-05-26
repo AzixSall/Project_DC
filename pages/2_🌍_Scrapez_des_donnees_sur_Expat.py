@@ -12,9 +12,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.os_manager import ChromeType
 
 def get_driver():
-    options = Options()
-    options.add_argument("--disable-gpu")
-    options.add_argument("--headless")
     chrome_driver_path = ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
     if chrome_driver_path is None:
         st.error("ChromeDriver could not be installed or found.")
@@ -23,9 +20,13 @@ def get_driver():
     st.write(f"ChromeDriver path: {chrome_driver_path}")
     
     return webdriver.Chrome(
-        service=Service(chrome_driver_path),
+        executable_path=chrome_driver_path,
         options=options,
     )
+
+options = Options()
+options.add_argument("--disable-gpu")
+options.add_argument("--headless")
 
 driver = get_driver()
 
