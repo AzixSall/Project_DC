@@ -11,34 +11,44 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.os_manager import ChromeType
 
+def get_driver():
+    options = Options()
+    options.add_argument("--disable-gpu")
+    options.add_argument("--headless")
+    chrome_driver_path = ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
+    if chrome_driver_path is None:
+        st.error("ChromeDriver could not be installed or found.")
+        return None
+
+    st.write(f"ChromeDriver path: {chrome_driver_path}")
+    
+    return webdriver.Chrome(
+        service=Service(chrome_driver_path),
+        options=options,
+    )
+
+driver = get_driver()
 
 def scraping(selected_value, selected_category):
     data_list = []
 
     for p in range(1, selected_value + 1):
         url = f'https://www.expat-dakar.com/{selected_category}?page={p}'
-        @st.cache_resource
-        def get_driver():
-            return webdriver.Chrome(
-                service=Service(
-                    ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
-                ),
-                options=options,
-            )
+        # driver = webdriver.Firefox()
+        # driver.get(url)
 
-        options = Options()
-        options.add_argument("--disable-gpu")
-        options.add_argument("--headless")
-
-        driver = get_driver()
+        # try:
+        #     element = WebDriverWait(driver, 10).until(
+        #         EC.presence_of_element_located((By.ID, "listings"))
+        #     )
+        # except Exception as e:
+        #     print(f"An error occurred: {e}")
         driver.get(url)
+        element_id = "listings"
 
-        try:
-            element = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.ID, "listings"))
-            )
-        except Exception as e:
-            print(f"An error occurred: {e}")
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, element_id))
+        )
 
         soup = bs(driver.page_source, 'html.parser')
         driver.quit()
