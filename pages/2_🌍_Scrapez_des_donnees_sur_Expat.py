@@ -6,6 +6,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.os_manager import ChromeType
 
 
 def scraping(selected_value, selected_category):
@@ -13,7 +17,20 @@ def scraping(selected_value, selected_category):
 
     for p in range(1, selected_value + 1):
         url = f'https://www.expat-dakar.com/{selected_category}?page={p}'
-        driver = webdriver.Firefox()
+        @st.cache_resource
+        def get_driver():
+            return webdriver.Chrome(
+                service=Service(
+                    ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
+                ),
+                options=options,
+            )
+
+        options = Options()
+        options.add_argument("--disable-gpu")
+        options.add_argument("--headless")
+
+        driver = get_driver()
         driver.get(url)
 
         try:
