@@ -27,32 +27,75 @@ def scraping(selected_value, selected_category):
         driver.quit()
 
         containers = soup.find_all('div', class_ = 'listings-cards__list-item')
+        if selected_category == 'voitures':
+            for container in containers:
+                try:
+                    infoGen = container.find('div', class_ = 'listing-card__header__tags').findAll('span')
+                    carState = infoGen[0].text
+                    marque = infoGen[1].text
+                    anne = infoGen[2].text
+                    boitVit = infoGen[3].text
+                    adresseVente = container.find('div', class_ = 'listing-card__header__location').text.replace('\n', '')
+                    prix = container.find('span', class_ = 'listing-card__price__value 1').text.replace('\n', '').replace('\u202f', '').replace(' F Cfa', '')
+                    image_link = container.find('img', 'listing-card__image__resource vh-img')['src']
 
-        for container in containers:
-            try:
-                infoGen = container.find('div', class_ = 'listing-card__header__tags').findAll('span')
-                carState = infoGen[0].text
-                marque = infoGen[1].text
-                anne = infoGen[2].text
-                boitVit = infoGen[3].text
-                adresseVente = container.find('div', class_ = 'listing-card__header__location').text.replace('\n', '')
-                prix = container.find('span', class_ = 'listing-card__price__value 1').text.replace('\n', '').replace('\u202f', '').replace(' F Cfa', '')
-                image_link = container.find('img', 'listing-card__image__resource vh-img')['src']
+                    obj = {
+                        'etat_car' : carState,
+                        'marque': marque,
+                        'annee' : int(anne),
+                        'boite_vit' : boitVit,
+                        'adresse_vente' : adresseVente,
+                        'prix' : int(prix),
+                        'image_link' : image_link
+                    }
 
-                obj = {
-                    'etat_car' : carState,
-                    'marque': marque,
-                    'annee' : int(anne),
-                    'boite_vit' : boitVit,
-                    'adresse_vente' : adresseVente,
-                    'prix' : int(prix),
-                    'image_link' : image_link
-                }
+                    data_list.append(obj)
+                except:
+                    pass
+        elif selected_category == 'motos-scooters':
+            for container in containers:
+                try:
+                    infoGen = container.find('div', class_ = 'listing-card__header__tags').findAll('span')
+                    etat = infoGen[0].text
+                    marque = infoGen[1].text
+                    annee = infoGen[2].text
+                    adresseVente = container.find('div', class_ = 'listing-card__header__location').text.replace('\n', '')
+                    prix = container.find('span', class_ = 'listing-card__price__value 1').text.replace('\n', '').replace('\u202f', '').replace(' F Cfa', '')
+                    image_link = container.find('img', 'listing-card__image__resource vh-img')['src']
 
-                data_list.append(obj)
+                    obj = {
+                        'etat_moto' : etat,
+                        'marque': marque,
+                        'annee' : int(annee),
+                        'adresse_vente' : adresseVente,
+                        'prix' : int(prix),
+                        'image_link' : image_link
+                    }
 
-            except:
-                pass
+                    data_list.append(obj)
+                except:
+                    pass
+                       
+        else:
+            for container in containers:
+                try:
+                    details = container.find('div', class_ = 'listing-card__header__title').text.strip('[\n')
+                    etat = container.find('div', class_ = 'listing-card__header__tags').find('span').text
+                    adresseVente = container.find('div', class_ = 'listing-card__header__location').text.replace('\n', '')
+                    prix = container.find('span', class_ = 'listing-card__price__value 1').text.replace('\n', '').replace('\u202f', '').replace(' F Cfa', '')
+                    image_link = container.find('img', 'listing-card__image__resource vh-img')['src']
+
+                    obj = {
+                        'details': details,
+                        'etat' : etat,
+                        'adresse_vente' : adresseVente,
+                        'prix' : int(prix),
+                        'image_link' : image_link
+                    }
+
+                    data_list.append(obj)
+                except:
+                    pass
 
     df = pd.DataFrame(data_list)
     st.dataframe(df)
@@ -66,5 +109,5 @@ st.write(
 )
 
 selected_value = st.selectbox("Selectionner le nombre de page a scraper sur Expat", list(range(1, 11)))
-selected_category = st.radio('Pick one:', ['voitures','motos-scooters','equipements-pieces'])
+selected_category = st.radio('Choississez une categorie:', ['voitures','motos-scooters','equipements-pieces'])
 scraping(selected_value, selected_category)
