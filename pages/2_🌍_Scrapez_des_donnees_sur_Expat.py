@@ -45,12 +45,12 @@ def scraping(selected_value, selected_category):
         #     print(f"An error occurred: {e}")
         driver = get_driver()
         driver.get(url)
-        try:
-            WebDriverWait(driver, 60).until(
-                EC.presence_of_element_located((By.ID, "listings"))
-            )
-        except Exception as e:
-            st.write(f'{e}')
+        # try:
+        #     WebDriverWait(driver, 60).until(
+        #         EC.presence_of_element_located((By.ID, "listings"))
+        #     )
+        # except Exception as e:
+        #     st.write(f'{e}')
 
         soup = bs(driver.page_source, 'html.parser')
         driver.quit()
