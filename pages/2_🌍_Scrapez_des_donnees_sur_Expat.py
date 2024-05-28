@@ -11,6 +11,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.os_manager import ChromeType
 
+@st.cache_resource
 def get_driver():
     options = Options()
     options.add_argument("--disable-gpu")
@@ -45,11 +46,11 @@ def scraping(selected_value, selected_category):
         driver = get_driver()
         driver.get(url)
         try:
-            WebDriverWait(driver, 30).until(
+            WebDriverWait(driver).until(
                 EC.presence_of_element_located((By.ID, "listings"))
             )
         except Exception as e:
-            st.write(e)
+            st.write(f'{e}')
 
         soup = bs(driver.page_source, 'html.parser')
         driver.quit()
