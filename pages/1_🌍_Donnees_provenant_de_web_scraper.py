@@ -27,7 +27,7 @@ st.markdown("# Web Scraper")
 st.sidebar.header("Web Scraper")
 
 st.write(
-    """Cette page montre different differentes donnees non nettoyer scraper avec Web Scraper"""
+    """Cette page montre differentes donnees non nettoyer scraper avec Web Scraper"""
 )
 
 webScraperData()

@@ -12,6 +12,9 @@ from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.os_manager import ChromeType
 
 def get_driver():
+    options = Options()
+    options.add_argument("--disable-gpu")
+    options.add_argument("--headless")
     chrome_driver_path = ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
     if chrome_driver_path is None:
         st.error("ChromeDriver could not be installed or found.")
@@ -24,11 +27,6 @@ def get_driver():
         options=options,
     )
 
-options = Options()
-options.add_argument("--disable-gpu")
-options.add_argument("--headless")
-
-driver = get_driver()
 
 def scraping(selected_value, selected_category):
     data_list = []
@@ -44,6 +42,7 @@ def scraping(selected_value, selected_category):
         #     )
         # except Exception as e:
         #     print(f"An error occurred: {e}")
+        driver = get_driver()
         driver.get(url)
         element_id = "listings"
 
