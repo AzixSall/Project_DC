@@ -21,7 +21,7 @@ def get_driver():
         st.error("ChromeDriver could not be installed or found.")
         return None
 
-    st.write(f"ChromeDriver path: {chrome_driver_path}")
+    #st.write(f"ChromeDriver path: {chrome_driver_path}")
     
     return webdriver.Chrome(
         executable_path=chrome_driver_path,
@@ -46,7 +46,7 @@ def scraping(selected_value, selected_category):
         driver = get_driver()
         driver.get(url)
         try:
-            WebDriverWait(driver).until(
+            WebDriverWait(driver, 60).until(
                 EC.presence_of_element_located((By.ID, "listings"))
             )
         except Exception as e:
