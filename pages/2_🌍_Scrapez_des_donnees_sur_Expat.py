@@ -45,7 +45,7 @@ def scraping(selected_value, selected_category):
         driver = get_driver()
         driver.get(url)
         try:
-            WebDriverWait(driver, 10).until(
+            WebDriverWait(driver, 30).until(
                 EC.presence_of_element_located((By.ID, "listings"))
             )
         except Exception as e:
