@@ -1,7 +1,9 @@
+import random
 import streamlit as st
 import pandas as pd
 from requests import get
 from bs4 import BeautifulSoup as bs
+from selenium_stealth import stealth
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -14,6 +16,15 @@ from webdriver_manager.core.os_manager import ChromeType
 
 def get_driver():
     options = Options()
+    user_agents = [
+        #add your list of user agents here
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+    ]
+
+    user_agent = random.choice(user_agents)
+    options.add_argument(f"user-agent={user_agent}")
+    
     options.add_argument("--disable-gpu")
     options.add_argument("--headless")
     chrome_driver_path = ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
@@ -44,6 +55,15 @@ def scraping(selected_value, selected_category):
         # except Exception as e:
         #     print(f"An error occurred: {e}")
         driver = get_driver()
+        stealth(
+            driver,
+            languages=["en-US", "en"],
+            vendor="Google Inc.",
+            platform="Win32",
+            webgl_vendor="Intel Inc.",
+            renderer="Intel Iris OpenGL Engine",
+            fix_hairline=True,
+        )
         driver.get(url)
         try:
             WebDriverWait(driver, 60).until(
