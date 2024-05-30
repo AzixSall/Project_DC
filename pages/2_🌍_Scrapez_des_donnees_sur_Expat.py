@@ -12,6 +12,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.os_manager import ChromeType
+from webdriver_manager.firefox import GeckoDriverManager
 
 
 def get_driver():
@@ -25,17 +26,15 @@ def get_driver():
     user_agent = random.choice(user_agents)
     options.add_argument(f"user-agent={user_agent}")
     
-    options.add_argument("--disable-gpu")
-    options.add_argument("--headless")
-    chrome_driver_path = ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
-    if chrome_driver_path is None:
-        st.error("ChromeDriver could not be installed or found.")
+    gecko_driver_path = GeckoDriverManager().install()
+    if gecko_driver_path is None:
+        st.error("GeckoDriver could not be installed or found.")
         return None
 
-    #st.write(f"ChromeDriver path: {chrome_driver_path}")
-    
-    return webdriver.Chrome(
-        executable_path=chrome_driver_path,
+    #st.write(f"GeckoDriver path: {gecko_driver_path}")
+
+    return webdriver.Firefox(
+        executable_path=gecko_driver_path,
         options=options,
     )
 
