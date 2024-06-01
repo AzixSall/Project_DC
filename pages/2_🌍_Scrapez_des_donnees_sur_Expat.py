@@ -17,6 +17,7 @@ from webdriver_manager.firefox import GeckoDriverManager
 
 def get_driver():
     options = Options()
+    
     options.add_argument("--disable-gpu")
     options.add_argument("--headless")
     user_agents = [
@@ -28,15 +29,15 @@ def get_driver():
     user_agent = random.choice(user_agents)
     options.add_argument(f"user-agent={user_agent}")
     
-    chrome_driver_path = ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
-    if chrome_driver_path is None:
-        st.error("ChromeDriver could not be installed or found.")
+    gecko_driver_path = GeckoDriverManager().install()
+    if gecko_driver_path is None:
+        st.error("GeckoDriver could not be installed or found.")
         return None
 
     #st.write(f"GeckoDriver path: {gecko_driver_path}")
 
-    return webdriver.Chrome(
-        executable_path=chrome_driver_path,
+    return webdriver.Firefox(
+        executable_path=gecko_driver_path,
         options=options,
     )
 
@@ -67,7 +68,7 @@ def scraping(selected_value, selected_category):
         )
         driver.get(url)
         try:
-            element = WebDriverWait(driver, 60).until(
+            WebDriverWait(driver, 60).until(
                 EC.presence_of_element_located((By.ID, "listings"))
             )
         except Exception as e:
